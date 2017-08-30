@@ -5,7 +5,6 @@ import hug
 @hug.local()
 def trigger(image: hug.types.text, command: hug.types.text, tag='latest'):
     """Runs command inside image:tag"""
-    import docker, os
-    client = docker.from_env()
-    volumes = { '/code/': { 'bind': '/downloads/' } }
-    return client.containers.run("{}:{}".format(image, tag), command, volumes=volumes)
+    from .tasks import run_in_container
+    run_in_container("{}:{}".format(image, tag), command)
+    return 'queued'

@@ -1,9 +1,30 @@
 version: "3"
 services:
+  broker:
+    image: rabbitmq:3.6-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=web
+      - RABBITMQ_DEFAULT_PASS=074FE68BB71F4D79853F209788C3673D
   web:
     build: .
-    command: hug
+    command: sh /code/run.sh
     volumes:
       - .:/code
       - /var/run/docker.sock:/var/run/docker.sock
-    
+    environment:
+      - RABBITMQ_DEFAULT_USER=web
+      - RABBITMQ_DEFAULT_PASS=074FE68BB71F4D79853F209788C3673D
+    depends_on:
+      - broker
+  worker:
+    build: .
+    command: celery -A tasks worker --loglevel=debug
+    volumes:
+      - .:/code
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - RABBITMQ_DEFAULT_USER=web
+      - RABBITMQ_DEFAULT_PASS=074FE68BB71F4D79853F209788C3673D
+    depends_on:
+      - broker
+
