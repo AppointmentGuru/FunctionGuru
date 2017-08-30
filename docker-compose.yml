@@ -7,7 +7,8 @@ services:
       - RABBITMQ_DEFAULT_PASS=074FE68BB71F4D79853F209788C3673D
   web:
     build: .
-    command: sh /code/run.sh
+    # command: sh /code/run.sh
+    command: gunicorn api:__hug_wsgi__ --bind 0.0.0.0:80 --reload
     volumes:
       - .:/code
       - /var/run/docker.sock:/var/run/docker.sock
@@ -16,6 +17,8 @@ services:
       - RABBITMQ_DEFAULT_PASS=074FE68BB71F4D79853F209788C3673D
     depends_on:
       - broker
+    ports:
+      - '8002:80'
   worker:
     build: .
     command: celery -A tasks worker --loglevel=debug

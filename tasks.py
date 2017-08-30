@@ -4,7 +4,6 @@ import os
 rabbit_user = os.environ.get('RABBITMQ_DEFAULT_USER')
 rabbit_pass = os.environ.get('RABBITMQ_DEFAULT_PASS')
 connection = 'amqp://{}:{}@broker:5672//'.format(rabbit_user, rabbit_pass)
-print (connection)
 app = Celery('tasks', broker=connection)
 
 @app.task
