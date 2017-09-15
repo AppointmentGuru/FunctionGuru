@@ -4,7 +4,7 @@ import os
 rabbit_user = os.environ.get('RABBITMQ_DEFAULT_USER')
 rabbit_pass = os.environ.get('RABBITMQ_DEFAULT_PASS')
 connection = 'amqp://{}:{}@broker:5672//'.format(rabbit_user, rabbit_pass)
-app = Celery('tasks', broker=connection)
+app = Celery('tasks', broker=connection, backend='amqp')
 
 @app.task
 def add(x, y):
@@ -15,5 +15,4 @@ def add(x, y):
 def run_in_container(image, command):
     import docker, os
     client = docker.from_env()
-    volumes = { '/code/': { 'bind': '/downloads/' } }
-    return client.containers.run(image, command, volumes=volumes)
+    return client.containers.run(image, command)

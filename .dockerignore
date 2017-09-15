@@ -1,0 +1,9 @@
+.git
+README.md
+env.*
+Dockerfile
+.DS_Store
+docker-compose.*
+release.sh
+docker-compose.school.yml
+docker-compose.yml

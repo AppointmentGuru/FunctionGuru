@@ -30,4 +30,3 @@ services:
       - RABBITMQ_DEFAULT_PASS=074FE68BB71F4D79853F209788C3673D
     depends_on:
       - broker
-
