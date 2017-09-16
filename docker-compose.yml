@@ -12,9 +12,7 @@ services:
     volumes:
       - .:/code
       - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - RABBITMQ_DEFAULT_USER=web
-      - RABBITMQ_DEFAULT_PASS=074FE68BB71F4D79853F209788C3673D
+    env_file: dev.env
     depends_on:
       - broker
     ports:
@@ -25,8 +23,6 @@ services:
     volumes:
       - .:/code
       - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - RABBITMQ_DEFAULT_USER=web
-      - RABBITMQ_DEFAULT_PASS=074FE68BB71F4D79853F209788C3673D
+    env_file: dev.env
     depends_on:
       - broker
