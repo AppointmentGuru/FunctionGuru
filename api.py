@@ -10,7 +10,12 @@ def trigger(
     command: hug.types.text,
     background: hug.types.smart_boolean=True,
     tag='latest'):
-    """Runs command inside image:tag"""
+    """
+    Runs command inside image:tag
+
+    `curl -X POST http://localhost:8002/trigger/ --data image=appointmentguru/urltopdfandemail --data command="hug -f api.py -c handle info@38.co.za http://yahoo.com"`
+
+    """
 
     image_tag = "{}:{}".format(image, tag)
     if background:

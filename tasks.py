@@ -1,6 +1,7 @@
 from celery import Celery
 from time import sleep
 import os, docker
+
 rabbit_user = os.environ.get('RABBITMQ_DEFAULT_USER')
 rabbit_pass = os.environ.get('RABBITMQ_DEFAULT_PASS')
 connection = 'amqp://{}:{}@broker:5672//'.format(rabbit_user, rabbit_pass)
@@ -13,7 +14,19 @@ def add(x, y):
 
 @app.task
 def run_in_container(image, command):
+
     client = docker.from_env()
+
+    env = [
+        'MAILGUN_TOKEN={}'.format(os.environ.get('MAILGUN_TOKEN')),
+        'MAILGUN_DOMAIN={}'.format(os.environ.get('MAILGUN_DOMAIN'))
+    ]
+
     # pull the image:
-    client.images.pull(image, auth_config={"username": os.environ(DOCKER_USERNAME), "password": "budry0kibri"}
-    return client.containers.run(image, command)
+    auth = {
+        "username": os.environ.get('DOCKER_USERNAME'),
+        "password": os.environ.get('DOCKER_PASSWORD')
+    }
+    client.images.pull(image, auth_config=auth)
+    result = client.containers.run(image, command, environment=env)
+    return result.decode("utf-8")
