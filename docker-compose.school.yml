@@ -1,10 +1,10 @@
 version: "3"
 services:
   school:
-    image: appointmentguru/school:latest
+    image: appointmentguru/infrastructure:latest
     volumes:
       - ~/.ssh:/root/.ssh # map ssh keys
-    command: ansible-playbook /code/ansible/deploy.drf.yml  -i /etc/ansible/inventory/digital_ocean.py -e "organization=AppointmentGuru service=functionguru entity_name=function"
+    command: ansible-playbook /code/ansible/deploy.drf.yml  -i /etc/ansible/inventory/digital_ocean.py -e "organization=appointmentguru service=functionguru entity_name=function" --skip-tags="kong,postgres"
     environment:
       - ANSIBLE_HOST_KEY_CHECKING=False
       - ANSIBLE_LIBRARY=/etc/ansible/library
