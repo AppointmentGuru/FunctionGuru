@@ -63,17 +63,18 @@ def service(slug: hug.types.text):
 @hug.cli()
 def gc(seconds: hug.types.number=60):
     '''Garbage collection'''
+    while True:
+        for service in DOCKER.services.list():
 
-    for service in DOCKER.services.list():
+            if '_functionguru_' in service.name:
+                created = parser.parse(service.attrs.get('CreatedAt'))
+                now = datetime.datetime.utcnow()
+                now = now.replace(tzinfo=pytz.utc)
+                delete_before = datetime.timedelta(seconds=seconds)
 
-        created = parser.parse(service.attrs.get('CreatedAt'))
-        now = datetime.datetime.utcnow()
-        now = now.replace(tzinfo=pytz.utc)
-        delete_before = datetime.timedelta(seconds=seconds)
-
-        if created < (now - delete_before):
-            service.remove()
-            print ('removed {}'.format(service.name))
+                if created < (now - delete_before):
+                    service.remove()
+                    print ('removed {}'.format(service.name))
 
 
 
