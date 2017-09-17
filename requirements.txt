@@ -2,3 +2,6 @@ hug
 docker
 gunicorn
 celery
+pyyaml
+python-dateutil
+pytz

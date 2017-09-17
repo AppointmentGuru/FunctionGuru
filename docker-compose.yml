@@ -17,12 +17,3 @@ services:
       - broker
     ports:
       - '8002:80'
-  worker:
-    build: .
-    command: celery -A tasks worker --loglevel=debug
-    volumes:
-      - .:/code
-      - /var/run/docker.sock:/var/run/docker.sock
-    env_file: dev.env
-    depends_on:
-      - broker
