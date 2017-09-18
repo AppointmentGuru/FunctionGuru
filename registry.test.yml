@@ -1,0 +1,6 @@
+---
+functions:
+  debug:
+    name: Debug
+    container: appointmentguru/functiongurudebugger
+    command: 'hug -f api.py -c handle'

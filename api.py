@@ -5,28 +5,6 @@ from tasks import run_in_container
 
 DOCKER = docker.from_env()
 
-@hug.cli()
-@hug.post(examples='image=ubuntu&command=echo "hi"&async=0')
-@hug.local()
-def trigger(
-    image: hug.types.text,
-    command: hug.types.text,
-    background: hug.types.smart_boolean=True,
-    tag='latest'):
-    """
-    Runs command inside image:tag
-
-    `curl -X POST http://localhost:8002/trigger/ --data image=appointmentguru/urltopdfandemail --data command="hug -f api.py -c handle info@38.co.za http://yahoo.com"`
-
-    """
-
-    image_tag = "{}:{}".format(image, tag)
-    if background:
-        result = run_in_container.delay(image_tag, command)
-        return {"result": result.id}
-    else:
-        return run_in_container(image_tag, command)
-
 def get_secrets(list_of_secrets):
     required_secrets = []
     for secret_name in list_of_secrets:
@@ -39,26 +17,39 @@ def short_id():
     return str(uuid.uuid4()).split('-')[0]
 
 @hug.cli()
-@hug.post(examples='image=ubuntu&command=echo "hi"&async=0')
+@hug.post(examples='slug=debug&payload={}')
 @hug.local()
-def service(slug: hug.types.text):
+def service(slug: hug.types.text, command: hug.types.text):
     '''Run a service from the registry'''
     yml = open('registry.yml').read()
     registry = yaml.load(yml)
     config = registry.get('functions', {}).get(slug, None)
 
     if config is not None:
-        command = config.get('command')
+        restart_policy = docker.types.RestartPolicy(condition='none', max_attempts=1)
         secrets = get_secrets(config.get('secrets'))
         image = config.get('container')
         name = '{}_functionguru_{}'.format(slug, short_id())
-        return DOCKER.services.create(
+        print(command)
+        result = DOCKER.services.create(
             image,
             command,
             name=name,
-            secrets=secrets)
+            secrets=secrets,
+            restart_policy=restart_policy
+        )
+        # print(result)
+        return {
+            "image": image,
+            "name": name,
+            "command": command,
+        }
     else:
-        print('{} is not in the registry'.format(slug))
+        message = '{} is not in the registry'.format(slug)
+        print(message)
+        return json.dumps({
+            "error": message
+        })
 
 @hug.cli()
 def gc(seconds: hug.types.number=60):
