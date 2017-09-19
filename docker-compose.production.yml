@@ -1,0 +1,30 @@
+version: "3"
+services:
+  functionguru:
+    image: appointmentguru/functionguru
+    command: sh ./run.sh
+    # command: ping google.com
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - kong
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+  functionguru_gc:
+    image: appointmentguru/functionguru
+    command: hug -f api.py -c gc
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+networks:
+  kong:
+    external:
+      name: infrastructure_internal
