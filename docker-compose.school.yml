@@ -4,6 +4,7 @@ services:
     image: appointmentguru/infrastructure:latest
     volumes:
       - ~/.ssh:/root/.ssh # map ssh keys
+      - ./docker-compose.production.yml:/etc/ansible/roles/djangoapp/templates/docker-compose.yml
     command: ansible-playbook /code/ansible/deploy.drf.yml  -i /etc/ansible/inventory/digital_ocean.py -e "organization=appointmentguru service=functionguru entity_name=function" --skip-tags="kong,postgres"
     environment:
       - ANSIBLE_HOST_KEY_CHECKING=False

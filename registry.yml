@@ -1,0 +1,22 @@
+---
+functions:
+  debug:
+    name: Debug
+    container: appointmentguru/functiongurudebugger
+    command: 'hug -f api.py -c handle {foo} {bar} {baz} {bus}'
+    args:
+      required:
+        - foo
+        - bar
+      optional:
+        - baz: 'baz'
+        - bus: 'bus'
+    secrets:
+      - MAILGUN_TOKEN
+      - MAILGUN_DOMAIN
+  send_invoice:
+    name: Send invoice
+    container: appointmentguru/urltopdfandemail
+    secrets:
+      - MAILGUN_TOKEN
+      - MAILGUN_DOMAIN
